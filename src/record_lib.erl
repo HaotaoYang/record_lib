@@ -1,18 +1,23 @@
 -module(record_lib).
 
+-define(RECORD_UTIL_MOD, get_record_util_opts()).
+
 -export([
     map_2_record/2,
     record_2_map/1
 ]).
 
+%%% ============================================================================
+%%% API
+%%% ============================================================================
 map_2_record(RecordName, Map) ->
-    case record_helper:get_record(RecordName) of
+    case erlang:apply(?RECORD_UTIL_MOD, get_record, [RecordName]) of
         undefined -> undefined;
         Record ->
             Values = tuple_to_list(erlang:delete_element(1, Record)),
             MapKeys = maps:keys(Map),
             MapValues = maps:values(Map),
-            RecordFields = record_helper:fields_info(RecordName),
+            RecordFields = erlang:apply(?RECORD_UTIL_MOD, fields_info, [RecordName]),
             FieldsValue = [
                 begin
                     case get_field_index(Field, MapKeys) of
@@ -38,7 +43,7 @@ do_get_field_index(Field, Keys, N) ->
 
 record_2_map(Record) ->
     RecordName = element(1, Record),
-    Fields = record_helper:fields_info(RecordName),
+    Fields = erlang:apply(?RECORD_UTIL_MOD, fields_info, [RecordName]),
     Values = tuple_to_list(erlang:delete_element(1, Record)),
     {RetMap, _} = lists:foldl(
         fun(Field, {TempMap, Index}) ->
@@ -49,3 +54,15 @@ record_2_map(Record) ->
         Fields
     ),
     RetMap.
+
+%%% ============================================================================
+%%% INTERNAL API
+%%% ============================================================================
+get_record_util_opts() ->
+    Config = rebar_config:consult_root(),
+    Opts = proplists:get_value(record_util_opts, Config, []),
+    case lists:keyfind(module_name, 1, Opts) of
+        {module_name, ModuleName} when is_list(ModuleName) -> list_to_atom(ModuleName);
+        {module_name, ModuleName} when is_atom(ModuleName) -> ModuleName;
+        _ -> record_helper
+    end.
