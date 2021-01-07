@@ -10,17 +10,18 @@
 %%% ============================================================================
 %%% API
 %%% ============================================================================
-map_2_record(Map, RecordName) when is_atom(RecordName) ->
+map_2_record(Map, RecordName) when is_map(Map) andalso is_atom(RecordName) ->
     case get_record(RecordName) of
         undefined -> undefined;
         Record -> do_map_2_record(Map, Record)
     end;
-map_2_record(Map, Record) when is_tuple(Record) ->
+map_2_record(Map, Record) when is_map(Map) andalso is_tuple(Record) andalso Record =/= {} ->
     RecordName = element(1, Record),
     case is_record(Record, RecordName) andalso is_record(RecordName) of
         true -> do_map_2_record(Map, Record);
         _ -> undefined
-    end.
+    end;
+map_2_record(_, _) -> undefined.
 
 do_map_2_record(Map, Record) ->
     RecordName = element(1, Record),
@@ -50,12 +51,13 @@ do_get_field_index(Field, Keys, N) ->
         _ -> do_get_field_index(Field, Keys, N + 1)
     end.
 
-record_2_map(Record) when is_tuple(Record) ->
+record_2_map(Record) when is_tuple(Record) andalso Record =/= {} ->
     RecordName = element(1, Record),
     case is_record(Record, RecordName) andalso is_record(RecordName) of
         true -> do_record_2_map(RecordName, erlang:delete_element(1, Record));
         _ -> undefined
-    end.
+    end;
+record_2_map(_) -> undefined.
 
 do_record_2_map(RecordName, Values) ->
     Fields = fields_info(RecordName),
