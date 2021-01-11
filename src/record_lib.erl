@@ -76,8 +76,7 @@ do_record_2_map(RecordName, Values) ->
 %%% INTERNAL API
 %%% ============================================================================
 get_record_util_opts() ->
-    % Config = rebar_config:consult_root(),
-    {ok, Config} = get_config(),
+    Config = get_config(),
     Opts = proplists:get_value(record_util_opts, Config, []),
     case lists:keyfind(module_name, 1, Opts) of
         {module_name, ModuleName} when is_list(ModuleName) -> list_to_atom(ModuleName);
