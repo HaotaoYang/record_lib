@@ -1,6 +1,7 @@
 -module(record_lib).
 
 -define(RECORD_UTIL_MOD, get_record_util_opts()).
+-define(DEFAULT_CONFIG_FILE, "rebar.config").
 
 -export([
     map_2_record/2,
@@ -75,7 +76,8 @@ do_record_2_map(RecordName, Values) ->
 %%% INTERNAL API
 %%% ============================================================================
 get_record_util_opts() ->
-    Config = rebar_config:consult_root(),
+    % Config = rebar_config:consult_root(),
+    {ok, Config} = get_config(),
     Opts = proplists:get_value(record_util_opts, Config, []),
     case lists:keyfind(module_name, 1, Opts) of
         {module_name, ModuleName} when is_list(ModuleName) -> list_to_atom(ModuleName);
@@ -91,3 +93,70 @@ get_record(RecordName) ->
 
 fields_info(RecordName) ->
     erlang:apply(?RECORD_UTIL_MOD, fields_info, [RecordName]).
+
+get_config() ->
+    ConfigFile = config_file(),
+    RetTerms = case filename:extension(ConfigFile) of
+        ".script" ->
+            {ok, Terms} = consult_and_eval(remove_script_ext(ConfigFile), ConfigFile),
+            Terms;
+        _ ->
+            Script = ConfigFile ++ ".script",
+            case filelib:is_regular(Script) of
+                true ->
+                    {ok, Terms} = consult_and_eval(ConfigFile, Script),
+                    Terms;
+                false ->
+                    try_consult(ConfigFile)
+            end
+    end,
+    true = verify_config_format(RetTerms),
+    RetTerms.
+
+config_file() ->
+    case os:getenv("REBAR_CONFIG") of
+        false ->
+            ?DEFAULT_CONFIG_FILE;
+        ConfigFile ->
+            ConfigFile
+    end.
+
+remove_script_ext(F) ->
+    filename:rootname(F, ".script").
+
+consult_and_eval(File, Script) ->
+    StateData = try_consult(File),
+    %% file:consult/1 always returns the terms as a list, however file:script
+    %% can (and will) return any kind of term(), to make consult_and_eval
+    %% work the same way as eval we ensure that when no list is returned we
+    %% convert it in a list.
+    case file:script(Script, bs([{'CONFIG', StateData}, {'SCRIPT', Script}])) of
+        {ok, Terms} when is_list(Terms) ->
+            {ok, Terms};
+        {ok, Term} ->
+            {ok, [Term]};
+        Error ->
+            Error
+    end.
+
+bs(Vars) ->
+    lists:foldl(fun({K,V}, Bs) ->
+                        erl_eval:add_binding(K, V, Bs)
+                end, erl_eval:new_bindings(), Vars).
+
+try_consult(File) ->
+    case file:consult(File) of
+        {ok, Terms} ->
+            Terms;
+        {error, enoent} ->
+            [];
+        {error, Reason} ->
+            exit({error, "bad term file", File, Reason})
+    end.
+
+verify_config_format([]) ->
+    true;
+verify_config_format([{_Key, _Value} | T]) ->
+    verify_config_format(T);
+verify_config_format([Term | _]) ->
+    exit({bad_config_format, Term}).
