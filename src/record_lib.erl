@@ -2,6 +2,7 @@
 
 -define(RECORD_UTIL_MOD, get_record_util_opts()).
 -define(DEFAULT_CONFIG_FILE, "rebar.config").
+-define(DEFAULT_MODULE_NAME, record_helper).
 
 -export([
     map_2_record/2,
@@ -81,17 +82,17 @@ get_record_util_opts() ->
     case lists:keyfind(module_name, 1, Opts) of
         {module_name, ModuleName} when is_list(ModuleName) -> list_to_atom(ModuleName);
         {module_name, ModuleName} when is_atom(ModuleName) -> ModuleName;
-        _ -> record_helper
+        _ -> ?DEFAULT_MODULE_NAME
     end.
 
 is_record(RecordName) ->
-    erlang:apply(?RECORD_UTIL_MOD, is_record, [RecordName]).
+    ?RECORD_UTIL_MOD:is_record(RecordName).
 
 get_record(RecordName) ->
-    erlang:apply(?RECORD_UTIL_MOD, get_record, [RecordName]).
+    ?RECORD_UTIL_MOD:get_record(RecordName).
 
 fields_info(RecordName) ->
-    erlang:apply(?RECORD_UTIL_MOD, fields_info, [RecordName]).
+    ?RECORD_UTIL_MOD:fields_info(RecordName).
 
 get_config() ->
     ConfigFile = config_file(),

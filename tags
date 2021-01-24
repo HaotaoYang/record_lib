@@ -1,0 +1,33 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+DEFAULT_CONFIG_FILE	src/record_lib.erl	/^-define(DEFAULT_CONFIG_FILE, "rebar.config").$/;"	d
+DEFAULT_MODULE_NAME	src/record_lib.erl	/^-define(DEFAULT_MODULE_NAME, record_helper).$/;"	d
+RECORD_UTIL_MOD	src/record_lib.erl	/^-define(RECORD_UTIL_MOD, get_record_util_opts()).$/;"	d
+bs	src/record_lib.erl	/^bs(Vars) ->$/;"	f	module:record_lib
+config_file	src/record_lib.erl	/^config_file() ->$/;"	f	module:record_lib
+consult_and_eval	src/record_lib.erl	/^consult_and_eval(File, Script) ->$/;"	f	module:record_lib
+do_get_field_index	src/record_lib.erl	/^do_get_field_index(Field, Keys, N) ->$/;"	f	module:record_lib
+do_get_field_index	src/record_lib.erl	/^do_get_field_index(_Field, Keys, N) when N > length(Keys) -> undefined;$/;"	f	module:record_lib
+do_map_2_record	src/record_lib.erl	/^do_map_2_record(Map, Record) ->$/;"	f	module:record_lib
+do_record_2_map	src/record_lib.erl	/^do_record_2_map(RecordName, Values) ->$/;"	f	module:record_lib
+fields_info	src/record_lib.erl	/^fields_info(RecordName) ->$/;"	f	module:record_lib
+get_config	src/record_lib.erl	/^get_config() ->$/;"	f	module:record_lib
+get_field_index	src/record_lib.erl	/^get_field_index(Field, Keys) ->$/;"	f	module:record_lib
+get_record	src/record_lib.erl	/^get_record(RecordName) ->$/;"	f	module:record_lib
+get_record_util_opts	src/record_lib.erl	/^get_record_util_opts() ->$/;"	f	module:record_lib
+is_record	src/record_lib.erl	/^is_record(RecordName) ->$/;"	f	module:record_lib
+map_2_record	src/record_lib.erl	/^map_2_record(Map, Record) when is_map(Map) andalso is_tuple(Record) andalso Record =\/= {} ->$/;"	f	module:record_lib
+map_2_record	src/record_lib.erl	/^map_2_record(Map, RecordName) when is_map(Map) andalso is_atom(RecordName) ->$/;"	f	module:record_lib
+map_2_record	src/record_lib.erl	/^map_2_record(_, _) -> undefined.$/;"	f	module:record_lib
+record_2_map	src/record_lib.erl	/^record_2_map(Record) when is_tuple(Record) andalso Record =\/= {} ->$/;"	f	module:record_lib
+record_2_map	src/record_lib.erl	/^record_2_map(_) -> undefined.$/;"	f	module:record_lib
+record_lib	src/record_lib.erl	/^-module(record_lib).$/;"	m
+remove_script_ext	src/record_lib.erl	/^remove_script_ext(F) ->$/;"	f	module:record_lib
+try_consult	src/record_lib.erl	/^try_consult(File) ->$/;"	f	module:record_lib
+verify_config_format	src/record_lib.erl	/^verify_config_format([Term | _]) ->$/;"	f	module:record_lib
+verify_config_format	src/record_lib.erl	/^verify_config_format([]) ->$/;"	f	module:record_lib
+verify_config_format	src/record_lib.erl	/^verify_config_format([{_Key, _Value} | T]) ->$/;"	f	module:record_lib
